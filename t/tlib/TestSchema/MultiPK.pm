@@ -13,7 +13,7 @@ __PACKAGE__->add_columns(
         data_type         => 'integer',
     },
     id2 => {
-        data_type         => 'integer',
+        data_type         => 'text',
     },
     root_id => {
         data_type   => 'integer',

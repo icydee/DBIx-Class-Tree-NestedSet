@@ -14,7 +14,7 @@ __PACKAGE__->add_columns(
         is_auto_increment => 1,
     },
     root_id => {
-        data_type   => 'integer',
+        data_type   => 'text',
         is_nullable => 1,
     },
     lft     => { data_type => 'integer' },
