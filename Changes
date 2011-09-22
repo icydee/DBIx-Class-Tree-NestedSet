@@ -1,5 +1,8 @@
 Revision history for Perl extension DBIx::Class::Tree::NestedSet.
 
+0.09  Thu Sep 22 09:40:00 2011
+    - Fixed several document and code bugs reported on RT
+
 0.08  Thu Sep 22 09:02:00 2011
     - added take_cutting method provided by Moritz Lenz
 

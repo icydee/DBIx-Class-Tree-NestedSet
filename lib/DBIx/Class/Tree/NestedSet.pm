@@ -7,7 +7,7 @@ use Carp qw/croak/;
 #use Data::Dumper;
 use parent 'DBIx::Class';
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 $VERSION = eval $VERSION;
 
 __PACKAGE__->mk_classdata( _tree_columns => {} );
@@ -119,7 +119,7 @@ sub insert {
             }
 
             $row->update({
-                $root => $primary_columns[0],
+                $root => \"$primary_columns[0]",                #"
             });
 
             $row->discard_changes;
@@ -298,7 +298,7 @@ sub _attach_node {
     my ($root, $left, $right, $level) = $self->_get_columns;
 
     # $self cannot be a descendant of $node or $node itself
-    if ($self->$left >= $node->$left && $self->$right <= $node->$right) {
+    if ($self->$root == $node->$root && $self->$left >= $node->$left && $self->$right <= $node->$right) {
         croak("Cannot _attach_node to it's own descendant ");
     }
 
@@ -1370,9 +1370,9 @@ reloaded them from the database.
 
 A simple demonstration of this
 
-  $grampa   = $schema->schema->resultset('Simpsons')->create({ name = 'Abraham' });
-  $homer    = $grampa->add_children({name = 'Homer'});
-  $bart     = $homer->add_children({name = 'Bart'});
+  $grampa   = $schema->schema->resultset('Simpsons')->create({ name => 'Abraham' });
+  $homer    = $grampa->add_children({name => 'Homer'});
+  $bart     = $homer->add_children({name => 'Bart'});
 
 The methods in this module will do their best to keep instances that they know
 about updated. For example the first call to C<add_children> in the above example
