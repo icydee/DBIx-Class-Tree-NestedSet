@@ -7,7 +7,7 @@ use Carp qw/croak/;
 #use Data::Dumper;
 use parent 'DBIx::Class';
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 $VERSION = eval $VERSION;
 
 __PACKAGE__->mk_classdata( _tree_columns => {} );
@@ -1388,15 +1388,17 @@ Not doing so will have unpredictable results.
 
 =head1 AUTHORS
 
-Code by Ian Docherty E<lt>pause@icydee.comE<gt>
+Code by Ian Docherty E<lt>pause@iandocherty.comE<gt>
 
 Based on original code by Florian Ragwitz E<lt>rafl@debian.orgE<gt>
 
 Incorporating ideas and code from Pedro Melo E<lt>melo@simplicidade.org<gt>
 
+Thanks to Moritz Lenz for bug fixes and implementing take_cutting
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2009 The above authors
+Copyright (c) 2009-2011 The above authors
 
 This is free software. You may distribute this code under the same terms as Perl itself.
 
