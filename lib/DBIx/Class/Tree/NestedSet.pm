@@ -1409,6 +1409,26 @@ the database. To ensure you have the latest changes do the following.
 
 Not doing so will have unpredictable results.
 
+=head1 SUPPORT
+
+You can find information at:
+
+=over 4
+
+=item * AnnoCPAN: Annotated CPAN documentation
+
+L<http://annocpan.org/dist/DBIx-Class-Tree-NestedSet>
+
+=item * RT: CPAN's request tracker
+
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=DBIx-Class-Tree-NestedSet>
+
+=item * Search CPAN
+
+L<http://search.cpan.org/dist/DBIx-Class-Tree-NestedSet>
+
+=back
+
 =head1 AUTHORS
 
 Code by Ian Docherty E<lt>pause@iandocherty.comE<gt>
