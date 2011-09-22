@@ -1400,6 +1400,8 @@ Thanks to Moritz Lenz for bug fixes and implementing take_cutting
 
 Copyright (c) 2009-2011 The above authors
 
-This is free software. You may distribute this code under the same terms as Perl itself.
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.10.0 or,
+at your option, any later version of Perl 5 you may have available.
 
 =cut
