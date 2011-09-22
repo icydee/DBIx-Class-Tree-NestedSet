@@ -1,4 +1,4 @@
-use 5.010000;
+use 5.008003;
 use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
@@ -8,8 +8,6 @@ WriteMakefile(
     PREREQ_PM         => {
         DBICx::TestDatabase     => 0.01,
         DBIx::Class             => 0.08000,
-        Moose                   => 0.54,
-        namespace::autoclean    => 0,
     }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/DBIx/Class/Tree/NestedSet.pm', # retrieve abstract

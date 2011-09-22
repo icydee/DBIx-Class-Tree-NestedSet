@@ -4,10 +4,9 @@ use strict;
 use warnings;
 
 use Carp qw/croak/;
-#use Data::Dumper;
-use parent 'DBIx::Class';
+use base 'DBIx::Class';
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 $VERSION = eval $VERSION;
 
 __PACKAGE__->mk_classdata( _tree_columns => {} );
@@ -119,7 +118,7 @@ sub insert {
             }
 
             $row->update({
-                $root => \"$primary_columns[0]",                #"
+                $root => \"$primary_columns[0]",            #"
             });
 
             $row->discard_changes;
@@ -343,8 +342,6 @@ sub _graft_branch {
     my $node_is_root = $node->is_root;
     my $node_root   = $node->root;
 
-#print STDERR "GRAFT_BRANCH: node [".$node->id."] self [".$self->id."] left [$arg_left] level [$arg_level]\n";
-
     if ($node_is_root) {
         # Cannot graft our own root
         croak "Cannot graft our own root node!" if $node->$root == $self->$root;
@@ -365,16 +362,16 @@ sub _graft_branch {
     # Make a hole in the tree to accept the graft
     $self->discard_changes;
     $rset->search({
-        "me.$left"  => {'>=', $arg_left},
-        $root       => $self->$root,
-    })->update({
-        $left       => \"$left + $offset",                          #"
-    });
-    $rset->search({
         "me.$right" => {'>=', $arg_left},
         $root       => $self->$root,
     })->update({
         $right      => \"$right + $offset",                         #"
+    });
+    $rset->search({
+        "me.$left"  => {'>=', $arg_left},
+        $root       => $self->$root,
+    })->update({
+        $left       => \"$left + $offset",                          #"
     });
 
     # make the graft
@@ -444,17 +441,17 @@ sub _move_to_end {
     # Now move everything (except the root) back to fill in the gap
     $offset = $self->$right + 1 - $self->$left;
     $rset->search({
-        "me.$left"  => {'>=', $old_right},
-        $root       => $self->$root,
-    })->update({
-        $left       => \"$left - $offset",                          #"
-    });
-    $rset->search({
         "me.$right" => {'>=', $old_right},
         $left       => {'!=', 1},               # Root needs no adjustment
         $root       => $self->$root,
     })->update({
         $right      => \"$right - $offset",                         #"
+    });
+    $rset->search({
+        "me.$left"  => {'>=', $old_right},
+        $root       => $self->$root,
+    })->update({
+        $left       => \"$left - $offset",                          #"
     });
     $self->discard_changes;
 }
@@ -571,10 +568,10 @@ sub take_cutting {
             $left   => {'>=' => $p_lft },
             $right  => {'<=' => $p_rgt },
         })->update({
-            $left   => \"$left - $p_lft + 1",
-            $right  => \"$right - $p_lft + 1",
+            $left   => \"$left - $p_lft + 1",               #"
+            $right  => \"$right - $p_lft + 1",              #"
             $root   => $new_id,
-            $level  => \"$level - $l_diff",
+            $level  => \"$level - $l_diff",                 #"
         });
 
         # fix up the rest of the tree
@@ -582,14 +579,27 @@ sub take_cutting {
             $root   => $root_id,
             $left   => { '>=' => $p_rgt},
         })->update({
-            $left   => \"$left  - $p_diff",
-            $right  => \"$right - $p_diff",
+            $left   => \"$left  - $p_diff",                 #"
+            $right  => \"$right - $p_diff",                 #"
         });
     });
     return $self;
 }
 
-# Move a node to the left"
+sub dissolve {
+    my $self = shift;
+    my ($root, $left, $right, $level) = $self->_get_columns;
+    my $pk = ($self->result_source->primary_columns)[0];
+    $self->nodes_rs->search({$root => $self->$root})->update({
+        $level  => 1,
+        $left   => 1,
+        $right  => 2,
+        $root   => \"$pk",                                  #"
+    });
+    return $self;
+}
+
+# Move a node to the left
 # Swap position with the sibling on the left
 # returns the node it exchanged with on success, undef if it is already leftmost sibling
 #
@@ -1239,7 +1249,7 @@ Create a new node as a leftmost child to C<$homer>
 =head2 ATTACH METHODS
 
 The following attach methods take an existing node (and all of it's
-descendents) and attaches them to the tree in relation to an existing node.
+descendants) and attaches them to the tree in relation to an existing node.
 
 The node being inserted can either be from the same tree (as identified
 by the root_column) or from another tree. If the root of another tree is
@@ -1256,9 +1266,9 @@ e.g. if we had a parent with children A,B,C,D,E
 
 and we attached nodes 1,2,3 in the following calls, we expect the following results.
 
-  $parent->attach_right_child        1,2,3 gives us children A,B,C,D,E,1,2,3
+  $parent->attach_rightmost_child    1,2,3 gives us children A,B,C,D,E,1,2,3
 
-  $parent->attach_left_child         1,2,3 gives us children 1,2,3,A,B,C,D,E
+  $parent->attach_leftmost_child     1,2,3 gives us children 1,2,3,A,B,C,D,E
 
   $child_C->attach_right_sibling     1,2,3 gives us children A,B,C,1,2,3,D,E
 
@@ -1350,6 +1360,19 @@ node it exchanged with.
 If the C<$node> is already the rightmost node then no exchange takes place
 and the method returns undef.
 
+=head2 CUTTING METHODS
+
+=head2 take_cutting
+
+Cuts the invocant and its descendants out of the tree they are in,
+making the invocant the root of a new tree. Returns the modified
+invocant.
+
+=head2 dissolve
+
+Dissolves the entire thread, that is turn each node of the thread into a
+single-item tree of its own.
+
 =head1 CAVEATS
 
 =head2 Multiple Column Primary Keys
@@ -1392,15 +1415,15 @@ Code by Ian Docherty E<lt>pause@iandocherty.comE<gt>
 
 Based on original code by Florian Ragwitz E<lt>rafl@debian.orgE<gt>
 
-Incorporating ideas and code from Pedro Melo E<lt>melo@simplicidade.org<gt>
+Incorporating ideas and code from Pedro Melo E<lt>melo@simplicidade.orgE<gt>
 
-Thanks to Moritz Lenz for bug fixes and implementing take_cutting
+Special thanks to Moritz Lenz who sent in lots of patches and changes for version 0.08
 
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (c) 2009-2011 The above authors
 
-This library is free software; you can redistribute it and/or modify
+This is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.10.0 or,
 at your option, any later version of Perl 5 you may have available.
 

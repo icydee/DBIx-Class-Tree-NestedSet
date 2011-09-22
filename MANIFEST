@@ -1,6 +1,8 @@
 Changes
+lib/DBIx/Class/Tree/NestedSet.pm
 Makefile.PL
 MANIFEST
+META.yml
 README
 t/07-tree.t
 t/08-exception.t
@@ -12,11 +14,10 @@ t/13-private.t
 t/14-attach.t
 t/15-attach.t
 t/16-siblings.t
+t/17-cutting.t
+t/tlib/FailSchema.pm
 t/tlib/FailSchema/MissingCols.pm
+t/tlib/TestSchema.pm
 t/tlib/TestSchema/MultiPK.pm
 t/tlib/TestSchema/MultiTree.pm
-t/tlib/FailSchema.pm
-t/tlib/TestSchema.pm
 t/tlib/TestTree.pm
-lib/DBIx/Class/Tree/NestedSet.pm
-META.yml                                 Module meta-data (added by MakeMaker)
