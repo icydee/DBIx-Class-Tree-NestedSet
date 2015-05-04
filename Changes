@@ -1,5 +1,8 @@
 Revision history for Perl extension DBIx::Class::Tree::NestedSet.
 
+0.11  Thu May 4 15:02:00 2015
+    - set `is_foreign_key_constraint` to false for relationship attributes
+
 0.10  Thu Sep 22 15:50:00 2011
     - got rid of namespace::autoclean and Moose dependencies
       (both were only used for testing)
